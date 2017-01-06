@@ -35,6 +35,7 @@ type Mesos struct {
 
 	IpOrder []string
 	taskTag map[string][]string
+	taskNameMap map[string][]string
 
 	// Whitelist/Blacklist privileges
 	TaskPrivilege *Privilege
@@ -59,10 +60,17 @@ func New(c *config.Config) *Mesos {
 	m.FwPrivilege = NewPrivilege(c.FwWhiteList, c.FwBlackList)
 
 	var err error
-	m.taskTag, err = buildTaskTag(c.TaskTag)
+	m.taskTag, err = buildTaskMap(c.TaskTag, "task-tag")
 	if err != nil {
 		log.WithField("task-tag", c.TaskTag).Fatal(err.Error())
 	}
+
+	m.taskNameMap, err = buildTaskMap(c.TaskNameMap, "task-name-map")
+	if err != nil {
+		log.WithField("task-name-map", c.TaskNameMap).Fatal(err.Error())
+	}
+	log.Debug("task-tag: %v", m.taskTag)
+	log.Debug("task-name-map: %v", m.taskNameMap)
 
 	m.ServiceName = cleanName(c.ServiceName, c.Separator)
 
@@ -93,19 +101,19 @@ func New(c *config.Config) *Mesos {
 	return m
 }
 
-// buildTaskTag takes a slice of task-tag arguments from the command line
+// buildTaskMap takes a slice of task-tag or task-name-map arguments from the command line
 // and returns a map of tasks name patterns to slice of tags that should be applied.
-func buildTaskTag(taskTag []string) (map[string][]string, error) {
+func buildTaskMap(patMap []string, context string) (map[string][]string, error) {
 	result := make(map[string][]string)
 
-	for _, tt := range taskTag {
+	for _, tt := range patMap {
 		parts := strings.Split(tt, ":")
 		if len(parts) != 2 {
-			return nil, errors.New("task-tag pattern invalid, must include 1 colon separator")
+			return nil, errors.New(context + " pattern invalid, must include 1 colon separator")
 		}
 
 		taskName := strings.ToLower(parts[0])
-		log.WithField("task-tag", taskName).Debug("Using task-tag pattern")
+		log.WithField(context, taskName).Debug("Using " + context + " pattern")
 		tags := strings.Split(parts[1], ",")
 
 		if _, ok := result[taskName]; !ok {

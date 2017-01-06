@@ -2,7 +2,7 @@ package mesos
 
 import "testing"
 
-func TestBuildTaskTag(t *testing.T) {
+func TestBuildTaskMap(t *testing.T) {
 	for _, tt := range []struct {
 		taskTag []string
 		r       map[string][]string
@@ -27,7 +27,7 @@ func TestBuildTaskTag(t *testing.T) {
 			"mytask": []string{"tag1", "tag2", "tag2", "tag3"},
 		}, ""},
 	} {
-		r, err := buildTaskTag(tt.taskTag)
+		r, err := buildTaskMap(tt.taskTag, "task-tag")
 		if err != nil {
 			if err.Error() != tt.err {
 				t.Errorf("buildTaskTag(%v) => (%v, %v) want (%v, %v)", tt.taskTag, r, err.Error(), tt.r, tt.err)

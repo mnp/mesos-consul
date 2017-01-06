@@ -87,6 +87,10 @@ func parseFlags(args []string) (*config.Config, error) {
 		c.TaskTag = append(c.TaskTag, s)
 		return nil
 	}), "task-tag", "")
+	flags.Var((funcVar)(func(s string) error {
+		c.TaskNameMap = append(c.TaskNameMap, s)
+		return nil
+	}), "task-name-map", "")
 	flags.StringVar(&c.ServiceName, "service-name", "mesos", "")
 	flags.StringVar(&c.ServiceTags, "service-tags", "", "")
 	flags.StringVar(&c.ServiceIdPrefix, "service-id-prefix", "mesos-consul", "")
@@ -156,6 +160,7 @@ Options:
 				Can be specified multiple times
   --task-tag=<pattern:tag>	Tag tasks whose name contains 'pattern' substring (case-insensitive) with given tag.
 				Can be specified multiple times
+  --task-name-map=<pattern:tag>	Rename task matching the pattern to a new name.
   --service-name=<name>		Service name of the Mesos hosts. (default: mesos)
   --service-tags=<tag>,...	Comma delimited list of tags to add to the mesos hosts
 				Hosts are registered as

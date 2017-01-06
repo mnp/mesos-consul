@@ -110,6 +110,12 @@ func (m *Mesos) registerTask(t *state.Task, agent string) {
 		tname = cleanName(t.Label("overrideTaskName"), m.Separator)
 		log.Debugf("overrideTaskName to : (%v)", tname)
 	}
+
+	if strings.Contains(tname, "node") {
+		log.Debug("HACK -------------- TEST ----------- forcing node-* to sheep")
+		tname = "sheep"
+	}
+
 	if !m.TaskPrivilege.Allowed(tname) {
 		// Task not allowed to be registered
 		return
@@ -209,6 +215,8 @@ func buildRegisterTaskTags(taskName string, startingTags []string, taskTag map[s
 
 	return result
 }
+
+
 
 func (m *Mesos) agentTags(ts ...string) []string {
 	if len(m.ServiceTags) == 0 {
