@@ -10,6 +10,7 @@ type Config struct {
 	LogLevel        string
 	MesosIpOrder    string
 	Healthcheck     bool
+	DryRun          bool
 	HealthcheckIp   string
 	HealthcheckPort string
 	TaskWhiteList   []string
@@ -31,6 +32,7 @@ func DefaultConfig() *Config {
 		Zk:              "zk://127.0.0.1:2181/mesos",
 		MesosIpOrder:    "netinfo,mesos,host",
 		Healthcheck:     false,
+		DryRun:          false,
 		HealthcheckIp:   "127.0.0.1",
 		HealthcheckPort: "24476",
 		TaskWhiteList:   []string{},

@@ -104,6 +104,9 @@ func (m *Mesos) registerTask(t *state.Task, agent string) {
 
 	registered := false
 
+	// CONFIGME FIXME TODO mnp
+	taskPortFmt := "%s-%d"
+
 	tname := cleanName(t.Name, m.Separator)
 	log.Debugf("original TaskName : (%v)", tname)
 	if t.Label("overrideTaskName") != "" {
@@ -142,6 +145,10 @@ func (m *Mesos) registerTask(t *state.Task, agent string) {
 			porttags = []string{}
 		}
 		if discoveryPort.Name != "" {
+			if taskPortFmt != "" {
+				tname = fmt.Sprintf(taskPortFmt, tname, discoveryPort.Number)
+				log.Debugf("port-mapped (discovery) TaskName : (%v)", tname)
+			}
 			m.Registry.Register(&registry.Service{
 				ID:      fmt.Sprintf("%s:%s:%s:%s:%d", m.ServiceIdPrefix, agent, tname, address, discoveryPort.Number),
 				Name:    tname,
@@ -160,6 +167,10 @@ func (m *Mesos) registerTask(t *state.Task, agent string) {
 
 	if t.Resources.PortRanges != "" {
 		for _, port := range t.Resources.Ports() {
+			if taskPortFmt != "" {
+				tname = fmt.Sprintf(taskPortFmt, tname, port)
+				log.Debugf("port-mapped (range) TaskName : (%v)", tname)
+			}
 			m.Registry.Register(&registry.Service{
 				ID:      fmt.Sprintf("%s:%s:%s:%s:%s", m.ServiceIdPrefix, agent, tname, address, port),
 				Name:    tname,

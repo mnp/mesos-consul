@@ -65,6 +65,7 @@ func parseFlags(args []string) (*config.Config, error) {
 	flags.StringVar(&c.Separator, "group-separator", "", "")
 	flags.StringVar(&c.MesosIpOrder, "mesos-ip-order", "netinfo,mesos,host", "")
 	flags.BoolVar(&c.Healthcheck, "healthcheck", false, "")
+	flags.BoolVar(&c.DryRun, "dryrun", false, "")
 	flags.StringVar(&c.HealthcheckIp, "healthcheck-ip", "127.0.0.1", "")
 	flags.StringVar(&c.HealthcheckPort, "healthcheck-port", "24476", "")
 	flags.Var((funcVar)(func(s string) error {
@@ -138,6 +139,7 @@ Options:
 				flag is enabled, serves a service health status on 127.0.0.1:24476 (default not enabled)
   --healthcheck-ip=<ip> 	Health check interface ip (default 127.0.0.1)
   --healthcheck-port=<port>	Health check service port (default 24476)
+  --dryrun			Do not register anything in Consul, just log what would have been done.
   --mesos-ip-order		Comma separated list to control the order in
 				which github.com/CiscoCloud/mesos-consul searches for the task IP
 				address. Valid options are 'netinfo', 'mesos', 'docker' and 'host'
