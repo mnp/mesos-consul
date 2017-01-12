@@ -209,7 +209,7 @@ func (m *Mesos) parseState(sj state.State) {
 			agent, ok := m.Agents[task.SlaveID]
 			if ok && task.State == "TASK_RUNNING" {
 				task.SlaveIP = agent
-				m.registerTask(&task, agent)
+				m.registerTask(&task, agent, fw.Name)
 			}
 		}
 	}

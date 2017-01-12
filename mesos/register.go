@@ -99,13 +99,13 @@ func (m *Mesos) registerHost(s *registry.Service) {
 	m.Registry.Register(s)
 }
 
-func (m *Mesos) registerTask(t *state.Task, agent string) {
+func (m *Mesos) registerTask(t *state.Task, agent string, fwName string) {
 	var tags []string
 
 	registered := false
 
 	tname := cleanName(t.Name, m.Separator)
-	log.Debugf("original TaskName : (%v)", tname)
+	log.Debugf("original TaskName (%v), framework (%v)", tname, fwName)
 	if t.Label("overrideTaskName") != "" {
 		tname = cleanName(t.Label("overrideTaskName"), m.Separator)
 		log.Debugf("overrideTaskName to : (%v)", tname)
@@ -160,9 +160,16 @@ func (m *Mesos) registerTask(t *state.Task, agent string) {
 
 	if t.Resources.PortRanges != "" {
 		for _, port := range t.Resources.Ports() {
+		 	fullname := tname
+			if strings.Contains(fwName, "confluent") {
+				fullname = fmt.Sprintf("%s-%s", fwName, port)
+				log.WithFields(log.Fields{
+					"tname": tname, "fwName": fwName, "port": port, "fullname": fullname,
+				}).Debug("registering one port of range")
+			}
 			m.Registry.Register(&registry.Service{
-				ID:      fmt.Sprintf("%s:%s:%s:%s:%s", m.ServiceIdPrefix, agent, tname, address, port),
-				Name:    tname,
+				ID:      fmt.Sprintf("%s:%s:%s:%s:%s", m.ServiceIdPrefix, agent, fullname, address, port),
+				Name:    fullname,
 				Port:    toPort(port),
 				Address: address,
 				Tags:    tags,
