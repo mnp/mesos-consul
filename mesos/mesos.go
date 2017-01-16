@@ -33,8 +33,9 @@ type Mesos struct {
 	started   sync.Once
 	startChan chan struct{}
 
-	IpOrder []string
-	taskTag map[string][]string
+	IpOrder     []string
+	taskTag     map[string][]string
+	fwPortNames *RegexList
 
 	// Whitelist/Blacklist privileges
 	TaskPrivilege *Privilege
@@ -57,6 +58,8 @@ func New(c *config.Config) *Mesos {
 
 	m.TaskPrivilege = NewPrivilege(c.TaskWhiteList, c.TaskBlackList)
 	m.FwPrivilege = NewPrivilege(c.FwWhiteList, c.FwBlackList)
+
+	m.FwPortNames = NewRegexList(c.FwPortNames)
 
 	var err error
 	m.taskTag, err = buildTaskTag(c.TaskTag)

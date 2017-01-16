@@ -17,6 +17,7 @@ type Config struct {
 	FwWhiteList     []string
 	FwBlackList     []string
 	TaskTag         []string
+	FwPortNames     []string
 	Separator       string
 
 	// Mesos service name and tags
@@ -38,6 +39,7 @@ func DefaultConfig() *Config {
 		FwWhiteList:     []string{},
 		FwBlackList:     []string{},
 		TaskTag:         []string{},
+		FwPortNames:     []string{},
 		Separator:       "",
 		ServiceName:     "mesos",
 		ServiceTags:     "",

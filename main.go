@@ -87,6 +87,10 @@ func parseFlags(args []string) (*config.Config, error) {
 		c.TaskTag = append(c.TaskTag, s)
 		return nil
 	}), "task-tag", "")
+	flags.Var((funcVar)(func(s string) error {
+		c.FwPortNames = append(c.FwPortNames, s)
+		return nil
+	}), "fw-port-names", "")
 	flags.StringVar(&c.ServiceName, "service-name", "mesos", "")
 	flags.StringVar(&c.ServiceTags, "service-tags", "", "")
 	flags.StringVar(&c.ServiceIdPrefix, "service-id-prefix", "mesos-consul", "")
@@ -154,6 +158,8 @@ Options:
   --fw-blacklist=<regex>	Do not register services from frameworks matching the provided
 				regex.
 				Can be specified multiple times
+  --fw-port-names=<regex>	Register tasks belonging to the given framework as 'name-portnum', ignoring task name.
+                                Can be specified multiple times. Can be combined with fw-black-list and fw-white-list.
   --task-tag=<pattern:tag>	Tag tasks whose name contains 'pattern' substring (case-insensitive) with given tag.
 				Can be specified multiple times
   --service-name=<name>		Service name of the Mesos hosts. (default: mesos)
