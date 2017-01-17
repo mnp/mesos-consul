@@ -160,12 +160,18 @@ func (m *Mesos) registerTask(t *state.Task, agent string, fwName string) {
 
 	if t.Resources.PortRanges != "" {
 		for _, port := range t.Resources.Ports() {
-		 	fullname := tname
-			if strings.Contains(fwName, "confluent") {
+			fullname := tname
+
+			if m.FwPortNames.MatchString(fwName, false) {
+				// if strings.Contains(fwName, "confluent") {
 				fullname = fmt.Sprintf("%s-%s", fwName, port)
 				log.WithFields(log.Fields{
 					"tname": tname, "fwName": fwName, "port": port, "fullname": fullname,
 				}).Debug("registering one port of range")
+			} else {
+				log.WithFields(log.Fields{
+					"tname": tname, "fwName": fwName, "port": port, "fullname": fullname,
+				}).Debug("DID NOT MATCH FwPortNames regex list")
 			}
 			m.Registry.Register(&registry.Service{
 				ID:      fmt.Sprintf("%s:%s:%s:%s:%s", m.ServiceIdPrefix, agent, fullname, address, port),

@@ -35,7 +35,7 @@ type Mesos struct {
 
 	IpOrder     []string
 	taskTag     map[string][]string
-	fwPortNames *RegexList
+	FwPortNames *RegexList
 
 	// Whitelist/Blacklist privileges
 	TaskPrivilege *Privilege
