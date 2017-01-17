@@ -42,4 +42,7 @@ package: xcompile
 		echo $$f; \
 	done
 
-.PHONY: all deps updatedeps build test xcompile package
+container: build Dockerfile
+	docker build -t mesos-consul .
+
+.PHONY: all deps updatedeps build test xcompile package container
